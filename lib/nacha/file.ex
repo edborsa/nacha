@@ -38,6 +38,7 @@ defmodule Nacha.File do
           optional(:descriptive_date) => String.t(),
           optional(:file_id_modifier) => String.t(),
           optional(:entry_description) => String.t(),
+          optional(:company_name) => String.t(),
           immediate_destination: String.t(),
           immediate_origin: String.t(),
           immediate_destination_name: String.t(),
@@ -117,7 +118,7 @@ defmodule Nacha.File do
       %{
         batch_number: batch_num,
         company_id: params.company_id,
-        company_name: params.immediate_origin_name,
+        company_name: Map.get(params, :company_name, params.immediate_origin_name),
         effective_date: params.effective_date,
         descriptive_date: Map.get(params, :descriptive_date),
         entry_description: Map.get(params, :entry_description),

@@ -225,6 +225,24 @@ defmodule Nacha.FileTest do
     test "calculates the credit total", %{subject: file} do
       assert file.control_record.total_credits == 1066
     end
+
+    test "defaults batch company_name to immediate_origin_name", %{subject: file} do
+      Enum.each(file.batches, fn batch ->
+        assert batch.header_record.company_name == "Sell Co"
+      end)
+    end
+
+    test "uses company_name param when provided" do
+      params = Map.put(@valid_params, :company_name, "Custom Name")
+      {:ok, file} = NachaFile.build(@entries, params)
+
+      Enum.each(file.batches, fn batch ->
+        assert batch.header_record.company_name == "Custom Name"
+      end)
+
+      # file header immediate_origin_name remains unchanged
+      assert file.header_record.immediate_origin_name == "Sell Co"
+    end
   end
 
   test "formatting a file as a string" do
